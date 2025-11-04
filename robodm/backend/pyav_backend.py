@@ -378,6 +378,8 @@ class PyAVBackend(ContainerBackend):
         # Process packets
         packets_muxed = 0
         for packet in input_container.demux(input_streams):
+            # packet_size = len(bytes(packet))
+            # logger.debug(f"Packet size: {packet_size} bytes")
             if not self.validate_packet(packet):
                 logger.debug(f"Skipping invalid packet: {packet}")
                 continue
@@ -440,12 +442,13 @@ class PyAVBackend(ContainerBackend):
             try:
                 for packet in stream.encode(
                         None):  # type: ignore[attr-defined]
+                    logger.info(f"New packet size: {len(bytes(packet))}")
                     output_container.mux(packet)
                     packets_muxed += 1
             except Exception as e:
                 logger.error(f"Error flushing output stream {stream}: {e}")
 
-        logger.debug(f"Transcoding complete: {packets_muxed} packets muxed")
+        logger.info(f"Transcoding complete: {packets_muxed} packets muxed")
 
         input_container.close()  # type: ignore[attr-defined]
         output_container.close()  # type: ignore[attr-defined]
@@ -863,11 +866,13 @@ class PyAVBackend(ContainerBackend):
         frame.time_base = output_stream.time_base
         frame.pts = packet.pts
         frame.dts = packet.dts
+        logger.info(f"_transcode_raw_to_image")
 
         # Encode and mux
         for new_packet in output_stream.encode(
                 frame):  # type: ignore[attr-defined]
             new_packet.stream = output_stream
+            logger.info(f"New packet size: {len(bytes(new_packet))}")
             output_container.mux(new_packet)
 
         return True
