@@ -33,7 +33,10 @@ import os
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 import logging
+from pathlib import Path
+
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 class DatasetHandler:
     def __init__(
@@ -339,43 +342,69 @@ def evaluation(args):
     for dataset_name in args.dataset_names:
         logger.debug(f"Evaluating dataset: {dataset_name}")
         
-        handlers = [
-            # VLAHandler(
-            #     args.exp_dir,
-            #     dataset_name,
-            #     args.num_batches,
-            #     args.batch_size,
-            #     args.log_frequency,
-            # ),
-            HDF5Handler(
-                args.exp_dir,
-                dataset_name,
-                args.num_batches,
-                args.batch_size,
-                args.log_frequency,
-            ),
-            # LeRobotHandler(
-            #     args.exp_dir,
-            #     dataset_name,
-            #     args.num_batches,
-            #     args.batch_size,
-            #     args.log_frequency,
-            # ),
-            # RLDSHandler(
-            #     args.exp_dir,
-            #     dataset_name,
-            #     args.num_batches,
-            #     args.batch_size,
-            #     args.log_frequency,
-            # ),
-            # FFV1Handler(
-            #     args.exp_dir,
-            #     dataset_name,
-            #     args.num_batches,
-            #     args.batch_size,
-            #     args.log_frequency,
-            # ),
-        ]
+        handlers = []
+
+        # Determine which handlers to use based on available formats
+        if args.formats is None or 'vla' in args.formats or 'all' in args.formats:
+            vla_path = os.path.join(args.exp_dir, 'vla', dataset_name)
+            if os.path.exists(vla_path) and any(Path(vla_path).glob('*.vla')):
+                handlers.append(VLAHandler(
+                    args.exp_dir,
+                    dataset_name,
+                    args.num_batches,
+                    args.batch_size,
+                    args.log_frequency,
+                ))
+                logger.info(f"Added VLAHandler for {dataset_name}")
+            elif args.formats and 'vla' in args.formats:
+                logger.warning(f"VLA format requested but not found at {vla_path}")
+
+        if args.formats is None or 'hdf5' in args.formats or 'all' in args.formats:
+            hdf5_path = os.path.join(args.exp_dir, 'hdf5', dataset_name)
+            if os.path.exists(hdf5_path) and any(Path(hdf5_path).glob('*.h5')):
+                handlers.append(HDF5Handler(
+                    args.exp_dir,
+                    dataset_name,
+                    args.num_batches,
+                    args.batch_size,
+                    args.log_frequency,
+                ))
+                logger.info(f"Added HDF5Handler for {dataset_name}")
+            elif args.formats and 'hdf5' in args.formats:
+                logger.warning(f"HDF5 format requested but not found at {hdf5_path}")
+
+        if args.formats is None or 'hf' in args.formats or 'lerobot' in args.formats or 'all' in args.formats:
+            hf_path = os.path.join(args.exp_dir, 'hf', dataset_name)
+            if os.path.exists(hf_path):
+                handlers.append(LeRobotHandler(
+                    args.exp_dir,
+                    dataset_name,
+                    args.num_batches,
+                    args.batch_size,
+                    args.log_frequency,
+                ))
+                logger.info(f"Added LeRobotHandler for {dataset_name}")
+            elif args.formats and ('hf' in args.formats or 'lerobot' in args.formats):
+                logger.warning(f"HuggingFace/LeRobot format requested but not found at {hf_path}")
+
+        if args.formats is None or 'rlds' in args.formats or 'all' in args.formats:
+            rlds_path = os.path.join(args.exp_dir, 'rlds', dataset_name)
+            if os.path.exists(rlds_path):
+                handlers.append(RLDSHandler(
+                    args.exp_dir,
+                    dataset_name,
+                    args.num_batches,
+                    args.batch_size,
+                    args.log_frequency,
+                ))
+                logger.info(f"Added RLDSHandler for {dataset_name}")
+            elif args.formats and 'rlds' in args.formats:
+                logger.warning(f"RLDS format requested but not found at {rlds_path}")
+
+        if not handlers:
+            logger.error(f"No valid dataset formats found for {dataset_name}")
+            logger.error(f"Checked directories under: {args.exp_dir}")
+            continue
 
         for handler in handlers:
             handler.clear_cache()
@@ -435,6 +464,13 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--batch_size", type=int, default=16, help="Batch size for loaders."
+    )
+    parser.add_argument(
+        "--formats",
+        nargs="+",
+        choices=["vla", "hdf5", "hf", "lerobot", "rlds", "all"],
+        default=None,
+        help="Specific formats to benchmark (default: all available formats).",
     )
     args = parser.parse_args()
 
