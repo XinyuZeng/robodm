@@ -7,23 +7,45 @@ name = "fog_x"
 version = "0.2.0"
 dependencies = [
     "numpy",
-    "pillow",
-    "smart_open",
-    "av",
-    "requests",
-    "h5py",
+ "pillow",
+ "smart_open",
+ "av",
+ "requests",
+ "h5py",
+ "pip>=25.3",
 ]
 description = "An Efficient and Scalable Data Collection and Management Framework For Robotics Learning"
-readme = {file = "README.md", content-type = "text/markdown"}
-license = {file = "LICENSE"}
-keywords = ["robotics", "data", "management", "collection", "framework", "learning"]
+readme = { file = "README.md", content-type = "text/markdown" }
+license-files = ["LICENSE"]
+keywords = [
+    "robotics",
+    "data",
+    "management",
+    "collection",
+    "framework",
+    "learning",
+]
 
 [project.optional-dependencies]
 hf = ["datasets"]
 rtx = ["tensorflow", "tensorflow_datasets", "envlogger"]
 aws = ["boto3"]
 torch = ["torch"]
-all = ["datasets", "tensorflow", "tensorflow_datasets", "envlogger", "boto3", "smart_open", "torch", "torchvision"]
+all = [
+    "datasets",
+    "tensorflow",
+    "tensorflow_datasets",
+    "envlogger",
+    "boto3",
+    "smart_open",
+    "torch",
+    "torchvision",
+]
 
 [project.urls]
 homepage = "https://github.com/BerkeleyAutomation/fog_x/"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["fog_x*"]
+exclude = ["data*", "tests*", "examples*", "scripts*", "docs*", "benchmarks*"]
