@@ -1,13 +1,14 @@
 from . import BaseLoader
 import numpy as np
 import torch
-from lerobot.common.datasets.lerobot_dataset import LeRobotDataset
+from lerobot.datasets.lerobot_dataset import LeRobotDataset
 
 class LeRobotLoader(BaseLoader):
-    def __init__(self, path, dataset_name, batch_size=1, delta_timestamps=None):
+    def __init__(self, path, dataset_name, batch_size=1, delta_timestamps=None, root=None):
         super(LeRobotLoader, self).__init__(path)
         self.batch_size = batch_size
-        self.dataset = LeRobotDataset(root="/mnt/data/fog_x/hf/", repo_id=dataset_name, delta_timestamps=delta_timestamps)
+        # If root is not provided, LeRobotDataset will use default: ~/.cache/huggingface/lerobot
+        self.dataset = LeRobotDataset(repo_id=dataset_name, root=path, delta_timestamps=delta_timestamps)
         self.episode_index = 0
 
     def __len__(self):

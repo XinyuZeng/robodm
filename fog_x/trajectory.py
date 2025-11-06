@@ -811,7 +811,7 @@ class Trajectory:
 
     def _create_frame(self, image_array, stream):
         frame = av.VideoFrame.from_ndarray(np.array(image_array, dtype=np.uint8))
-        frame.pict_type = "NONE"
+        # frame.pict_type = "NONE"  # Commented out: PyAV API changed, pict_type now expects integer enum not string
         return frame
 
     def _create_frame_depth(self, image_array, stream):
@@ -824,7 +824,7 @@ class Trajectory:
         if len(image_array.shape) == 3:
             image_array = image_array[:, :, 0]
         frame = av.VideoFrame.from_ndarray(image_array, format="gray")
-        frame.pict_type = "NONE"
+        # frame.pict_type = "NONE"  # Commented out: PyAV API changed, pict_type now expects integer enum not string
         frame.time_base = stream.time_base
         return frame
 

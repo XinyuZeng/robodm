@@ -22,18 +22,17 @@ class VLALoader:
         self.batch_size = batch_size
         self.return_type = return_type
         # TODO: adjust buffer size
-        if "autolab" in path:
-            self.buffer_size = 4
+        # if "autolab" in path:
+        #     self.buffer_size = 4
         self.buffer_size = buffer_size
         self.buffer = mp.Queue(maxsize=buffer_size)
         if num_workers == -1:
-            num_workers = 4
+            num_workers = 2
         self.num_workers = num_workers
         self.processes = []
         random.shuffle(self.files)
         self._start_workers()
         
-
     def _get_files(self, path, split):
         ret = []
         if "*" in path:
