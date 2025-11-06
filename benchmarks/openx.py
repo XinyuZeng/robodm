@@ -24,7 +24,7 @@ DEFAULT_DATASET_NAMES = [
 ]
 # DEFAULT_DATASET_NAMES = ["bridge"]
 # CACHE_DIR = "/tmp/fog_x/cache/"
-CACHE_DIR  = "/mnt/data/fog_x/cache/"
+CACHE_DIR  = "/mnt/nvme0n1/xinyu/robodm/cache/"
 DEFAULT_LOG_FREQUENCY = 20
 
 # suppress tensorflow warnings

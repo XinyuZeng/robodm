@@ -7,12 +7,17 @@ name = "fog_x"
 version = "0.2.0"
 dependencies = [
     "numpy",
- "pillow",
- "smart_open",
- "av",
- "requests",
- "h5py",
- "pip>=25.3",
+    "pillow",
+    "smart_open",
+    "av",
+    "requests",
+    "h5py",
+    "tqdm",
+    "pip>=25.3",
+    "protobuf==3.20.3",
+    "tensorflow>=2.15.0",
+    "tensorflow-datasets",
+    "lerobot>=0.4.0",
 ]
 description = "An Efficient and Scalable Data Collection and Management Framework For Robotics Learning"
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -31,6 +36,7 @@ hf = ["datasets"]
 rtx = ["tensorflow", "tensorflow_datasets", "envlogger"]
 aws = ["boto3"]
 torch = ["torch"]
+lerobot = ["lerobot", "datasets", "torch", "torchvision"]
 all = [
     "datasets",
     "tensorflow",

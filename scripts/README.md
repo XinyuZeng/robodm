@@ -1,3 +1,16 @@
+Real steps:
+1. run `python scripts/download_openx_datasets.py --base_dir ~/robodm/data` to get download instructions
+2. download datasets in rlds format
+3. use examples/openx_loader.py to convert dataset to vla format
+4. use examples/vla_to_h5.py to convert vla to hdf5 format
+5. Dowload lerobot format from using
+```bash
+hf download \
+      IPEC-COMMUNITY/nyu_door_opening_surprising_effectiveness_lerobot \
+      --repo-type dataset \
+      --local-dir $BASE_DIR/hf/nyu_door_opening_surprising_effectiveness
+```
+
 # OpenX Dataset Preparation for Benchmarking
 
 This directory contains scripts to download, convert, and prepare OpenX datasets for benchmarking different data loading formats.

@@ -46,7 +46,7 @@ def main():
     args = parser.parse_args()
 
     vla_path = os.path.join(args.data_dir, args.dataset_name, "*.vla")
-    cache_dir = os.path.join("/mnt/data/fog_x/cache/", args.dataset_name)
+    cache_dir = os.path.join("/mnt/nvme1n1/xinyu/robodm/cache/", args.dataset_name)
     print(vla_path, cache_dir)
     loader = NonShuffleVLALoader(vla_path, cache_dir=cache_dir)
 
